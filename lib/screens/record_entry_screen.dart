@@ -89,7 +89,10 @@ class _RecordEntryScreenState extends State<RecordEntryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Record Profit/Loss")),
+      backgroundColor: ThemeData.dark().scaffoldBackgroundColor,
+      appBar: AppBar(
+          backgroundColor: Colors.grey.shade800,
+          title: const Text("Record Profit/Loss")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -101,40 +104,71 @@ class _RecordEntryScreenState extends State<RecordEntryScreen> {
                     _selectedDate == null
                         ? "No date selected"
                         : "Date: ${DateFormat('d MMMM, yyyy').format(_selectedDate!)}",
+                    style: TextStyle(color: Colors.white70),
                   ),
                 ),
                 TextButton(
                   onPressed: () => _pickDate(context),
-                  child: const Text("Pick Date"),
+                  child: const Text(
+                    "Pick Date",
+                    style: TextStyle(color: Colors.white70),
+                  ),
                 ),
               ],
             ),
             TextField(
+              style: TextStyle(color: Colors.white70),
               controller: _profitLossController,
               keyboardType: TextInputType.number,
-              decoration:
-                  const InputDecoration(labelText: "Profit/Loss Amount"),
+              decoration: const InputDecoration(
+                  labelText: "Profit/Loss Amount",
+                  labelStyle: TextStyle(color: Colors.white70)),
             ),
             TextField(
+              style: TextStyle(color: Colors.white70),
               controller: _reasonController,
-              decoration: const InputDecoration(labelText: "Reason"),
+              decoration: const InputDecoration(
+                  labelText: "Reason",
+                  labelStyle: TextStyle(color: Colors.white70)),
             ),
             TextField(
+              style: TextStyle(color: Colors.white70),
               controller: _investmentController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: "Investment Amount"),
+              decoration: const InputDecoration(
+                  labelText: "Investment Amount",
+                  labelStyle: TextStyle(color: Colors.white70)),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => _saveRecord(context),
-              child: const Text("Save Record"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => HeatmapScreen()));
-              },
-              child: const Text("View Heatmap"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                MaterialButton(
+                  height: 48,
+                  color: Colors.grey.shade800,
+                  onPressed: () => _saveRecord(context),
+                  child: const Text("Save Record",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white70,
+                      )),
+                ),
+                MaterialButton(
+                  height: 48,
+                  color: Colors.grey.shade800,
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => HeatmapScreen()));
+                  },
+                  child: const Text(
+                    "View Heatmap",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

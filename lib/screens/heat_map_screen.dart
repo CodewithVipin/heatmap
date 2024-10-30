@@ -30,13 +30,34 @@ class _HeatmapScreenState extends State<HeatmapScreen> {
         totalInvestment == 0 ? 0.0 : (totalProfit / totalInvestment) * 100;
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade900,
-      appBar: AppBar(title: const Text("Profit/Loss Heatmap")),
+      backgroundColor: ThemeData.dark().scaffoldBackgroundColor,
+      appBar: AppBar(
+          backgroundColor: Colors.grey.shade800,
+          title: const Text("Profit/Loss Heatmap")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Card(
+              color: Colors.grey.shade800,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Total Investment: ",
+                        style: TextStyle(
+                            color: Colors.grey.shade300,
+                            fontWeight: FontWeight.bold)),
+                    Text("${totalInvestment.toStringAsFixed(2)} Rs.",
+                        style: TextStyle(
+                            color: Colors.grey.shade300,
+                            fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+            ),
             Card(
               color: Colors.grey.shade700,
               child: Padding(
@@ -44,36 +65,34 @@ class _HeatmapScreenState extends State<HeatmapScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Total Investment: ",
-                        style: TextStyle(color: Colors.grey.shade300)),
-                    Text("${totalInvestment.toStringAsFixed(2)} Rs.",
-                        style: TextStyle(color: Colors.grey.shade300)),
+                    const Text(
+                      "Average Profit/Loss: ",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "${avgProfit.toStringAsFixed(2)} Rs.",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
               ),
             ),
             Card(
-              color: Colors.amber.shade300,
+              color: Colors.grey.shade500,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text("Average Profit/Loss: "),
-                    Text("${avgProfit.toStringAsFixed(2)} Rs."),
-                  ],
-                ),
-              ),
-            ),
-            Card(
-              color: Colors.green,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text("Average Profit %:"),
-                    Text(" ${avgProfitPercent.toStringAsFixed(2)} %"),
+                    const Text(
+                      "Average Profit %:",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    Text(
+                      " ${avgProfitPercent.toStringAsFixed(2)} %",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
               ),
@@ -143,10 +162,10 @@ class _HeatmapScreenState extends State<HeatmapScreen> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(35),
+                        borderRadius: BorderRadius.circular(8),
                         color: record.profitOrLoss >= 0
-                            ? Colors.green.shade700
-                            : Colors.red.shade700,
+                            ? const Color.fromARGB(255, 125, 147, 104)
+                            : const Color.fromARGB(255, 190, 127, 127),
                       ),
                       margin: const EdgeInsets.all(5.0),
                       child: Center(
@@ -169,7 +188,7 @@ class _HeatmapScreenState extends State<HeatmapScreen> {
       floatingActionButton: Visibility(
         visible: _tradingDataBox.isNotEmpty,
         child: FloatingActionButton(
-          backgroundColor: Colors.red,
+          backgroundColor: Color.fromARGB(255, 190, 127, 127),
           onPressed: () {
             // Check if there are any records before showing the confirmation dialog
             if (_tradingDataBox.isEmpty) {

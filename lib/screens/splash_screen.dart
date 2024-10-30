@@ -14,9 +14,13 @@ class SplashScreen extends StatelessWidget {
     });
 
     return Scaffold(
+      backgroundColor: ThemeData.dark().scaffoldBackgroundColor,
       body: Center(
         child: Text("Option Trading App",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            style: TextStyle(
+                color: Colors.white70,
+                fontSize: 24,
+                fontWeight: FontWeight.bold)),
       ),
     );
   }
