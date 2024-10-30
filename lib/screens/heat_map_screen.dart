@@ -101,16 +101,19 @@ class HeatmapScreen extends StatelessWidget {
                       final record = records[index];
                       return Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(35),
                           color: record.profitOrLoss >= 0
-                              ? Colors.green
-                              : Colors.red,
+                              ? Colors.green.shade700
+                              : Colors.red.shade700,
                         ),
-                        margin: const EdgeInsets.all(4.0),
+                        margin: const EdgeInsets.all(5.0),
                         child: Center(
                           child: Text(
                             "${record.profitOrLoss >= 0 ? '+' : ''}${record.profitOrLoss.toStringAsFixed(2)}",
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                            ),
                           ),
                         ),
                       );
