@@ -13,7 +13,7 @@ class SplashScreen extends StatelessWidget {
           context, MaterialPageRoute(builder: (_) => RecordEntryScreen()));
     });
 
-    return const Scaffold(
+    return Scaffold(
       body: Center(
         child: Text("Option Trading App",
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
