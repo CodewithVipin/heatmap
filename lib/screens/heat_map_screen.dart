@@ -22,35 +22,104 @@ class HeatmapScreen extends StatelessWidget {
         totalInvestment == 0 ? 0.0 : (totalProfit / totalInvestment) * 100;
 
     return Scaffold(
+      backgroundColor: Colors.grey.shade900,
       appBar: AppBar(title: const Text("Profit/Loss Heatmap")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text("Total Investment: \$${totalInvestment.toStringAsFixed(2)}"),
-            Text("Average Profit/Loss: \$${avgProfit.toStringAsFixed(2)}"),
-            Text("Average Profit %: ${avgProfitPercent.toStringAsFixed(2)}%"),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 5),
-                itemCount: records.length,
-                itemBuilder: (context, index) {
-                  final record = records[index];
-                  return Container(
-                    margin: const EdgeInsets.all(4.0),
-                    color: record.profitOrLoss >= 0 ? Colors.green : Colors.red,
-                    child: Center(
-                      child: Text(
-                        "${record.profitOrLoss >= 0 ? '+' : ''}${record.profitOrLoss.toStringAsFixed(2)}",
-                        style: const TextStyle(color: Colors.white),
+        child: Container(
+          decoration: BoxDecoration(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Card(
+                  color: Colors.grey.shade700,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Total Investment: ",
+                            style: TextStyle(color: Colors.grey.shade300),
+                          ),
+                          Text(
+                            "${totalInvestment.toStringAsFixed(2)} Rs.",
+                            style: TextStyle(color: Colors.grey.shade300),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
+                  )),
+              Card(
+                  color: Colors.amber.shade300,
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Average Profit/Loss: "),
+                          Text("${avgProfit.toStringAsFixed(2)} Rs."),
+                        ],
+                      ),
+                    ),
+                  )),
+              Card(
+                  color: Colors.green,
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Average Profit :"),
+                          Text(" ${avgProfitPercent.toStringAsFixed(2)} %")
+                        ],
+                      ),
+                    ),
+                  )),
+              SizedBox(
+                height: 15,
               ),
-            ),
-          ],
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: GridView.builder(
+                    padding: EdgeInsets.all(5),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 5),
+                    itemCount: records.length,
+                    itemBuilder: (context, index) {
+                      final record = records[index];
+                      return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: record.profitOrLoss >= 0
+                              ? Colors.green
+                              : Colors.red,
+                        ),
+                        margin: const EdgeInsets.all(4.0),
+                        child: Center(
+                          child: Text(
+                            "${record.profitOrLoss >= 0 ? '+' : ''}${record.profitOrLoss.toStringAsFixed(2)}",
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
