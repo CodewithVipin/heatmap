@@ -185,51 +185,48 @@ class _HeatmapScreenState extends State<HeatmapScreen> {
           ],
         ),
       ),
-      floatingActionButton: Visibility(
-        visible: _tradingDataBox.isNotEmpty,
-        child: FloatingActionButton(
-          backgroundColor: Color.fromARGB(255, 190, 127, 127),
-          onPressed: () {
-            // Check if there are any records before showing the confirmation dialog
-            if (_tradingDataBox.isEmpty) {
-              // Show snackbar if there are no records
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Nothing to delete!")),
-              );
-              return; // Exit the function early if there are no records
-            }
-
-            // Confirmation dialog before deleting
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text("Delete All Records"),
-                content: const Text(
-                    "Are you sure you want to delete all records? This action cannot be undone."),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text("Cancel"),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // Clear all records in the box and update UI
-                      _tradingDataBox.clear();
-                      setState(() {}); // Triggers UI rebuild
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("All records deleted.")),
-                      );
-                    },
-                    child: const Text("Delete",
-                        style: TextStyle(color: Colors.red)),
-                  ),
-                ],
-              ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color.fromARGB(255, 190, 127, 127),
+        onPressed: () async {
+          if (_tradingDataBox.isEmpty) {
+            // Show snackbar if there are no records
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Nothing to delete!")),
             );
-          },
-          child: const Icon(Icons.delete),
-        ),
+            return;
+          }
+
+          // Confirmation dialog before deleting
+          final deleteConfirmed = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text("Delete All Records"),
+              content: const Text(
+                  "Are you sure you want to delete all records? This action cannot be undone."),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text("Cancel"),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child:
+                      const Text("Delete", style: TextStyle(color: Colors.red)),
+                ),
+              ],
+            ),
+          );
+
+          // If deletion is confirmed, proceed to clear the box and update the UI
+          if (deleteConfirmed == true) {
+            await _tradingDataBox.clear(); // Clear all records in the box
+            setState(() {}); // Rebuild the UI immediately
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("All records deleted.")),
+            );
+          }
+        },
+        child: const Icon(Icons.delete),
       ),
     );
   }
