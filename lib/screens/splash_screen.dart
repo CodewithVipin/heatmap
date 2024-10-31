@@ -18,9 +18,7 @@ class SplashScreen extends StatelessWidget {
       body: Center(
         child: Text("Option Trading App",
             style: TextStyle(
-                color: Colors.white70,
-                fontSize: 24,
-                fontWeight: FontWeight.bold)),
+                color: Colors.grey, fontSize: 24, fontWeight: FontWeight.bold)),
       ),
     );
   }
