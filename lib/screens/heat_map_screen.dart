@@ -201,7 +201,7 @@ class SummaryDetails extends StatelessWidget {
                     TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
               ),
               Text(
-                "$totalProfit Rs.",
+                "${totalProfit.toStringAsFixed(2)} Rs.",
                 style:
                     TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
               ),
