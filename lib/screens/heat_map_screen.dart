@@ -47,7 +47,11 @@ class _HeatmapScreenState extends State<HeatmapScreen> {
                     avgProfitPercent: avgProfitPercent,
                   ),
                   const SizedBox(height: 15),
-                  Expanded(child: ProfitLossHeatmap(records: records)),
+                  Expanded(
+                      child: ProfitLossHeatmap(
+                    records: records,
+                    onDelete: () => setState(() {}),
+                  )),
                 ],
               )
             : Center(
@@ -215,9 +219,11 @@ class SummaryDetails extends StatelessWidget {
 
 // Widget to display profit/loss heatmap grid
 class ProfitLossHeatmap extends StatelessWidget {
+  final Function onDelete; // Add a callback parameter
   final List<TradingRecord> records;
 
-  const ProfitLossHeatmap({super.key, required this.records});
+  const ProfitLossHeatmap(
+      {super.key, required this.records, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -245,7 +251,7 @@ class ProfitLossHeatmap extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Date: ${DateFormat('d MMMM, yyyy - hh:mm a').format(record.date)}",
+                      "Date: ${DateFormat('d MMMM, yyyy').format(record.date)}",
                       style: TextStyle(color: Colors.white70),
                     ),
                     const SizedBox(height: 8),
@@ -274,6 +280,18 @@ class ProfitLossHeatmap extends StatelessWidget {
                     onPressed: () => Navigator.of(context).pop(),
                     child: const Text("Close",
                         style: TextStyle(color: Colors.blue)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      await Hive.box('tradingData').deleteAt(index);
+                      onDelete(); // Trigger refresh in the parent widget
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Record deleted.")),
+                      );
+                    },
+                    child: const Text("Delete",
+                        style: TextStyle(color: Colors.red)),
                   ),
                 ],
               ),
