@@ -1,0 +1,2 @@
+/Users/vipinmaurya/Desktop/heatmap/android/app/.cxx/Debug/2r2t2c2q/x86/CMakeFiles/edit_cache.dir
+/Users/vipinmaurya/Desktop/heatmap/android/app/.cxx/Debug/2r2t2c2q/x86/CMakeFiles/rebuild_cache.dir
