@@ -10,15 +10,19 @@ class ProfitLossHeatmap extends StatelessWidget {
   final Function onDelete; // Add a callback parameter
   final List<TradingRecord> records;
 
-  const ProfitLossHeatmap(
-      {super.key, required this.records, required this.onDelete});
+  const ProfitLossHeatmap({
+    super.key,
+    required this.records,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       padding: const EdgeInsets.all(5),
-      gridDelegate:
-          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 5,
+      ),
       itemCount: records.length,
       itemBuilder: (context, index) {
         final record = records[index];
@@ -32,8 +36,10 @@ class ProfitLossHeatmap extends StatelessWidget {
               context: context,
               builder: (context) => AlertDialog(
                 backgroundColor: Colors.grey.shade800,
-                title: const Text("Details",
-                    style: TextStyle(color: Colors.white)),
+                title: const Text(
+                  "Details",
+                  style: TextStyle(color: Colors.white),
+                ),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,8 +72,10 @@ class ProfitLossHeatmap extends StatelessWidget {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text("Close",
-                        style: TextStyle(color: Colors.blue)),
+                    child: const Text(
+                      "Close",
+                      style: TextStyle(color: Colors.blue),
+                    ),
                   ),
                   TextButton(
                     onPressed: () async {
@@ -78,8 +86,10 @@ class ProfitLossHeatmap extends StatelessWidget {
                         const SnackBar(content: Text("Record deleted.")),
                       );
                     },
-                    child: const Text("Delete",
-                        style: TextStyle(color: Colors.red)),
+                    child: const Text(
+                      "Delete",
+                      style: TextStyle(color: Colors.red),
+                    ),
                   ),
                 ],
               ),
@@ -87,9 +97,7 @@ class ProfitLossHeatmap extends StatelessWidget {
           },
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(25),
-              ),
+              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(25)),
               color: record.profitOrLoss >= 0
                   ? Colors.teal
                   : Colors.deepOrange.shade400,
@@ -98,10 +106,7 @@ class ProfitLossHeatmap extends StatelessWidget {
             child: Center(
               child: Text(
                 "${record.profitOrLoss >= 0 ? '+' : ''}${record.profitOrLoss.toStringAsFixed(2)}",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                ),
+                style: const TextStyle(color: Colors.white, fontSize: 10),
               ),
             ),
           ),
