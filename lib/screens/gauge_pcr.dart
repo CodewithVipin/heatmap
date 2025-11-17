@@ -1,6 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api, deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:heat_map/theme/app_colors.dart';
+import 'package:heat_map/widgets/theme_toggle_icon.dart';
 
 class DeepMarketInsight extends StatefulWidget {
   const DeepMarketInsight({super.key});
@@ -10,9 +12,9 @@ class DeepMarketInsight extends StatefulWidget {
 }
 
 class _DeepMarketInsightState extends State<DeepMarketInsight> {
-  void Function()? onPressed;
   final TextEditingController callOiController = TextEditingController();
   final TextEditingController putOiController = TextEditingController();
+
   double? pcr;
   String marketMood = "Neutral / Wait for Confirmation";
   Color moodColor = Colors.grey;
@@ -23,9 +25,10 @@ class _DeepMarketInsightState extends State<DeepMarketInsight> {
 
     if (callOi == null || putOi == null || callOi == 0 || putOi == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
-              "Enter valid numbers. Call and Put OI Change should be greater than zero."),
+            "Enter valid numbers. Values should be greater than zero.",
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -33,7 +36,7 @@ class _DeepMarketInsightState extends State<DeepMarketInsight> {
     }
 
     setState(() {
-      pcr = putOi / callOi; // Calculate PCR
+      pcr = putOi / callOi;
       marketMood = _determineMarketMood(callOi, putOi);
     });
   }
@@ -42,10 +45,8 @@ class _DeepMarketInsightState extends State<DeepMarketInsight> {
     double difference = (putOi - callOi).abs();
     double threshold = 0.5 * (callOi < putOi ? callOi : putOi);
 
-    // Strict Condition: Only show Buy Call or Buy Put if PCR is <= 0.5 or >= 2
     if (pcr! <= 0.5 || pcr! >= 2.0) {
       if (difference > threshold) {
-        // Still applying 50% OI difference rule
         if (putOi > callOi) {
           moodColor = Colors.green;
           return "Bullish (Buy Call)";
@@ -56,7 +57,6 @@ class _DeepMarketInsightState extends State<DeepMarketInsight> {
       }
     }
 
-    // Otherwise, show Neutral
     moodColor = Colors.grey;
     return "Neutral / Wait for Confirmation";
   }
@@ -64,123 +64,239 @@ class _DeepMarketInsightState extends State<DeepMarketInsight> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87,
-      appBar: AppBar(
-        title:
-            Text("Deep Market Insight", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.black,
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTextField(callOiController, "Enter Call OI Change", () {
-                setState(() {
-                  callOiController.clear();
-                });
-              }),
-              SizedBox(height: 10),
-              _buildTextField(putOiController, "Enter Put OI Change", () {
-                setState(() {
-                  putOiController.clear();
-                });
-              }),
-              SizedBox(height: 20),
-              _buildGradientButton(),
-              SizedBox(height: 30),
-              _buildResultCard(),
-              SizedBox(height: 30),
-              Visibility(
-                visible: moodColor != Colors.grey,
-                child: Center(
-                    child: Text(
-                  "Vipin! Only Grab 10 Points!",
-                  style: TextStyle(fontSize: 18),
-                )),
+      backgroundColor: darkBackgroundColor,
+
+      // ⭐ PREMIUM COFFEE APPBAR
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(90),
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF6D4C41), Color(0xFF4A3128)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(22),
+              bottomRight: Radius.circular(22),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black54,
+                blurRadius: 18,
+                offset: Offset(0, 6),
               ),
             ],
           ),
+
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Back button
+                  IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+
+                  // Title
+                  const Text(
+                    "Deep Market Insight",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+
+                  // Theme toggle
+                  const ThemeToggleIcon(),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+
+      // ⭐ BODY
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _modernInputField(
+              controller: callOiController,
+              hint: "Enter Call OI Change",
+            ),
+
+            const SizedBox(height: 15),
+
+            _modernInputField(
+              controller: putOiController,
+              hint: "Enter Put OI Change",
+            ),
+
+            const SizedBox(height: 30),
+
+            _gradientButton(),
+
+            const SizedBox(height: 35),
+
+            _resultCard(),
+
+            const SizedBox(height: 20),
+
+            Visibility(
+              visible: moodColor != Colors.grey,
+              child: Center(
+                child: Text(
+                  "Vipin! Grab Only 10 Points! 😎",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: darkTextColor,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String hint,
-      void Function()? onPressed) {
+  // ⭐ Modern Coffee Input Field
+  Widget _modernInputField({
+    required TextEditingController controller,
+    required String hint,
+  }) {
     return TextField(
       controller: controller,
       keyboardType: TextInputType.number,
-      style: TextStyle(color: Colors.white),
+      style: const TextStyle(color: Colors.white),
+
       decoration: InputDecoration(
-        suffix: IconButton(onPressed: onPressed, icon: Icon(Icons.close)),
-        hintText: hint,
-        hintStyle: TextStyle(color: Colors.grey),
         filled: true,
-        fillColor: Colors.grey[900],
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
+        fillColor: darkTabColor.withOpacity(0.9),
+        hintText: hint,
+        hintStyle: const TextStyle(color: Colors.white54),
+
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.close, color: Colors.white70),
+          onPressed: () => controller.clear(),
+        ),
+
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 18,
+          horizontal: 16,
+        ),
+
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Colors.white12),
+        ),
+
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Colors.tealAccent),
         ),
       ),
     );
   }
 
-  Widget _buildGradientButton() {
+  // ⭐ Gradient Button
+  Widget _gradientButton() {
     return GestureDetector(
       onTap: calculatePCR,
+
       child: Container(
-        height: 50,
-        width: double.infinity,
+        height: 55,
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [Colors.teal, Colors.greenAccent]),
-          borderRadius: BorderRadius.circular(10),
+          gradient: const LinearGradient(
+            colors: [Colors.tealAccent, Colors.green],
+          ),
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.greenAccent.withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        child: Center(
+
+        child: const Center(
           child: Text(
             "Analyze Market",
             style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildResultCard() {
+  // ⭐ Market Result Card
+  Widget _resultCard() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
+
       decoration: BoxDecoration(
-        color: moodColor.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: moodColor, width: 1.5),
+        color: moodColor.withOpacity(0.18),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: moodColor, width: 1.4),
         boxShadow: [
-          BoxShadow(color: moodColor.withOpacity(0.5), blurRadius: 10)
+          BoxShadow(
+            color: moodColor.withOpacity(0.35),
+            blurRadius: 12,
+            offset: const Offset(0, 5),
+          ),
         ],
       ),
+
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("Market Mood",
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white)),
-          SizedBox(height: 8),
-          Text(marketMood,
-              style: TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.bold, color: moodColor)),
+          Text(
+            "Market Mood",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: darkTextColor,
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          Text(
+            marketMood,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: darkTextColor,
+            ),
+          ),
+
           if (pcr != null) ...[
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               "PCR: ${pcr!.toStringAsFixed(2)}",
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: darkTextColor,
+              ),
             ),
           ],
         ],
