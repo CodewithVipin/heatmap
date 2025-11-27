@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, deprecated_member_use
 
 import 'package:flutter/material.dart';
 import 'package:heat_map/model/trading_record.dart';
@@ -140,9 +140,9 @@ class _HeatmapScreenState extends State<HeatmapScreen> {
       ),
       floatingActionButton: Visibility(
         visible: _tradingDataBox.toMap().entries.any((e) => e.value is Map),
-        child: FloatingActionButton(
-          backgroundColor: buttonColor,
-          onPressed: () async {
+
+        child: GestureDetector(
+          onTap: () async {
             final hasRecords = _tradingDataBox.toMap().entries.any(
               (e) => e.value is Map,
             );
@@ -156,20 +156,31 @@ class _HeatmapScreenState extends State<HeatmapScreen> {
             final deleteConfirmed = await showDialog<bool>(
               context: context,
               builder: (context) => AlertDialog(
-                title: const Text("Delete All Records"),
+                backgroundColor: darkTabColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                title: const Text(
+                  "Delete All Records",
+                  style: TextStyle(color: darkTextColor),
+                ),
                 content: const Text(
                   "Are you sure you want to delete all records? This action cannot be undone.",
+                  style: TextStyle(color: darkTextColor),
                 ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(false),
-                    child: const Text("Cancel"),
+                    child: const Text(
+                      "Cancel",
+                      style: TextStyle(color: Colors.grey),
+                    ),
                   ),
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(true),
                     child: const Text(
                       "Delete",
-                      style: TextStyle(color: Colors.red),
+                      style: TextStyle(color: Colors.redAccent),
                     ),
                   ),
                 ],
@@ -188,18 +199,41 @@ class _HeatmapScreenState extends State<HeatmapScreen> {
                 await _tradingDataBox.delete(key);
               }
 
-              // Clear the shown-for flag so next target can be tracked fresh
               if (_tradingDataBox.containsKey('targetAlertShownFor')) {
                 await _tradingDataBox.delete('targetAlertShownFor');
               }
 
               setState(() {});
+
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("All records deleted.")),
               );
             }
           },
-          child: const Icon(Icons.delete),
+
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.redAccent.shade400, Colors.red.shade700],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.redAccent.withOpacity(0.4),
+                  blurRadius: 18,
+                  spreadRadius: 3,
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.delete_forever_rounded,
+              size: 30,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );

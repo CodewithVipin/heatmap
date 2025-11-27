@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, deprecated_member_use, unnecessary_underscores
 
 import 'package:flutter/material.dart';
 import 'package:heat_map/model/trading_record.dart';
@@ -29,7 +29,6 @@ class _RecordEntryScreenState extends State<RecordEntryScreen> {
     super.initState();
     _loadTargetAmount();
 
-    // listen so UI updates if target changed elsewhere
     _box.watch().listen((event) {
       if (event.key == 'targetAmount' && mounted) {
         _loadTargetAmount();
@@ -37,7 +36,7 @@ class _RecordEntryScreenState extends State<RecordEntryScreen> {
     });
   }
 
-  // LOAD TARGET
+  // LOAD TARGET AMOUNT
   void _loadTargetAmount() {
     final dynamic raw = _box.get('targetAmount');
 
@@ -61,6 +60,7 @@ class _RecordEntryScreenState extends State<RecordEntryScreen> {
   // SAVE TARGET
   void _saveTargetAmount() {
     final value = double.tryParse(_targetController.text);
+
     if (value == null || value <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please enter a valid target amount.")),
@@ -70,7 +70,6 @@ class _RecordEntryScreenState extends State<RecordEntryScreen> {
 
     _box.put('targetAmount', value);
 
-    // Reset alert marker so next time can trigger
     if (_box.containsKey('targetAlertShownFor')) {
       _box.delete('targetAlertShownFor');
     }
@@ -153,43 +152,45 @@ class _RecordEntryScreenState extends State<RecordEntryScreen> {
     }
   }
 
-  // ----- UI helpers (modern minimal styles) -----
+  // ----------------------- UI + DECORATORS -----------------------
+
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
-      labelStyle: TextStyle(color: darkTextColor),
+      labelStyle: const TextStyle(color: darkTextColor),
       filled: true,
       fillColor: darkTabColor,
-      contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.white12),
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: Colors.white12),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: buttonColor),
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(color: buttonColor, width: 1.3),
       ),
     );
   }
 
-  Widget _buildActionButton(String text, VoidCallback onTap) {
+  Widget _actionButton(String text, VoidCallback onTap) {
     return SizedBox(
       height: 48,
       width: 160,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: buttonColor,
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+          elevation: 6,
           shadowColor: Colors.black45,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
         onPressed: onTap,
         child: Text(
           text,
-          style: TextStyle(
+          style: const TextStyle(
             color: darkButtonTextColor,
+            fontSize: 15,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -197,18 +198,20 @@ class _RecordEntryScreenState extends State<RecordEntryScreen> {
     );
   }
 
-  Widget _targetCard() {
-    return Container(
+  Widget _targetStatusCard() {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeOutCubic,
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: darkTabColor,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.shade700,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.25),
+            blurRadius: 10,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -219,10 +222,10 @@ class _RecordEntryScreenState extends State<RecordEntryScreen> {
               _hasTarget
                   ? "Target: ₹${_targetController.text}"
                   : "No target set",
-              style: TextStyle(
+              style: const TextStyle(
                 color: darkTextColor,
                 fontSize: 16,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -230,8 +233,11 @@ class _RecordEntryScreenState extends State<RecordEntryScreen> {
             TextButton(
               onPressed: _removeTarget,
               child: const Text(
-                "Remove Target",
-                style: TextStyle(color: Colors.redAccent),
+                "Remove",
+                style: TextStyle(
+                  color: Colors.redAccent,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
         ],
@@ -239,11 +245,10 @@ class _RecordEntryScreenState extends State<RecordEntryScreen> {
     );
   }
 
+  // ----------------------- MAIN UI -----------------------
+
   @override
   Widget build(BuildContext context) {
-    final dynamic rawTarget = _box.get('targetAmount');
-    _hasTarget = rawTarget != null;
-
     return Scaffold(
       backgroundColor: darkBackgroundColor,
       appBar: AppBar(
@@ -251,41 +256,37 @@ class _RecordEntryScreenState extends State<RecordEntryScreen> {
         elevation: 0,
         title: const Text("Record Profit/Loss"),
       ),
+
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Target area (card)
-              _targetCard(),
-              const SizedBox(height: 14),
+              _targetStatusCard(),
+              const SizedBox(height: 16),
 
-              // If there's no target show inline set-target row
-              if (!_hasTarget) ...[
+              if (!_hasTarget)
                 Row(
                   children: [
                     Expanded(
                       child: TextField(
                         controller: _targetController,
                         keyboardType: TextInputType.number,
-                        style: TextStyle(color: darkTextColor),
+                        style: const TextStyle(color: darkTextColor),
                         decoration: _inputDecoration("Set Target Amount (₹)"),
                       ),
                     ),
                     const SizedBox(width: 10),
                     IconButton(
-                      icon: Icon(Icons.save, color: buttonColor),
+                      icon: const Icon(Icons.save, color: buttonColor),
                       onPressed: _saveTargetAmount,
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-              ],
 
-              const Divider(color: Colors.white12, height: 26),
+              const SizedBox(height: 22),
 
-              // Date row
               Row(
                 children: [
                   Expanded(
@@ -293,12 +294,12 @@ class _RecordEntryScreenState extends State<RecordEntryScreen> {
                       _selectedDate == null
                           ? "No date selected"
                           : "Date: ${DateFormat('d MMMM, yyyy').format(_selectedDate!)}",
-                      style: TextStyle(color: darkTextColor),
+                      style: const TextStyle(color: darkTextColor),
                     ),
                   ),
                   TextButton(
                     onPressed: () => _pickDate(context),
-                    child: Text(
+                    child: const Text(
                       "Pick Date",
                       style: TextStyle(color: buttonColor),
                     ),
@@ -306,43 +307,73 @@ class _RecordEntryScreenState extends State<RecordEntryScreen> {
                 ],
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
 
-              // Profit / Loss input
               TextField(
-                style: TextStyle(color: darkTextColor),
                 controller: _profitLossController,
                 keyboardType: TextInputType.number,
-                decoration: _inputDecoration("Profit/Loss Amount"),
+                style: const TextStyle(color: darkTextColor),
+                decoration: _inputDecoration("Profit / Loss Amount"),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
 
-              // Investment input
               TextField(
                 controller: _investmentController,
                 keyboardType: TextInputType.number,
-                style: TextStyle(color: darkTextColor),
+                style: const TextStyle(color: darkTextColor),
                 decoration: _inputDecoration("Investment Amount"),
               ),
 
-              const SizedBox(height: 22),
+              const SizedBox(height: 24),
 
-              // Buttons row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildActionButton("Save Record", () => _saveRecord(context)),
-                  _buildActionButton("View Heatmap", () {
+                  _actionButton("Save Record", () => _saveRecord(context)),
+                  _actionButton("View Heatmap", () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const HeatmapScreen()),
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 500),
+                        pageBuilder: (_, animation, secondaryAnimation) =>
+                            const HeatmapScreen(),
+                        transitionsBuilder: (_, animation, __, child) {
+                          final offsetAnimation =
+                              Tween<Offset>(
+                                begin: const Offset(
+                                  0.1,
+                                  0,
+                                ), // subtle slide from right
+                                end: Offset.zero,
+                              ).animate(
+                                CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeOutCubic,
+                                ),
+                              );
+
+                          final fadeAnimation = Tween<double>(begin: 0, end: 1)
+                              .animate(
+                                CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeIn,
+                                ),
+                              );
+
+                          return FadeTransition(
+                            opacity: fadeAnimation,
+                            child: SlideTransition(
+                              position: offsetAnimation,
+                              child: child,
+                            ),
+                          );
+                        },
+                      ),
                     );
                   }),
                 ],
               ),
-
-              const SizedBox(height: 28),
             ],
           ),
         ),

@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'package:flutter/material.dart';
 import 'package:heat_map/model/trading_record.dart';
@@ -41,28 +41,42 @@ class ProfitLossHeatmap extends StatelessWidget {
         return GestureDetector(
           onTap: () =>
               _showDetailsDialog(context, record, hiveKey, profitLossPercent),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
+
+          child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
               color: isProfit
-                  ? const Color(0xFF0BAF8A)
-                  : const Color(0xFFE85A4F),
+                  ? Colors.green.withOpacity(0.15)
+                  : Colors.red.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12),
+
+              border: Border.all(
+                color: isProfit
+                    ? Colors.greenAccent.shade400
+                    : Colors.redAccent.shade200,
+                width: 0.8,
+              ),
+
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.shade800,
-                  blurRadius: 6,
-                  offset: const Offset(0, 3),
+                  color: isProfit
+                      ? Colors.greenAccent.withOpacity(0.2)
+                      : Colors.redAccent.withOpacity(0.2),
+                  blurRadius: 50,
+                  spreadRadius: -20,
                 ),
               ],
             ),
+
             child: Center(
               child: Text(
                 "${isProfit ? '+' : ''}${record.profitOrLoss.toStringAsFixed(2)}",
-                style: const TextStyle(
-                  color: Colors.white,
+                textAlign: TextAlign.center,
+                style: TextStyle(
                   fontSize: 11,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w200,
+                  color: isProfit
+                      ? Colors.greenAccent.shade200
+                      : Colors.redAccent.shade200,
                 ),
               ),
             ),

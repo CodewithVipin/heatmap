@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'package:flutter/material.dart';
 import 'package:heat_map/screens/land_screen.dart';
@@ -21,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // Animation Controller
+    // Animation Controller (Perfect Timing)
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
@@ -30,21 +30,29 @@ class _SplashScreenState extends State<SplashScreen>
     fadeIn = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
     slideUp = Tween<Offset>(
-      begin: const Offset(0, 0.3),
+      begin: const Offset(0, 0.22),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
     // Start animation
     _controller.forward();
 
-    // Navigate after delay
-    Future.delayed(const Duration(seconds: 2), () {
+    // Navigate with smooth fade transition after animation ends
+    Future.delayed(const Duration(milliseconds: 1600), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const LandScreen()),
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 500),
+          pageBuilder: (_, animation, _) {
+            return FadeTransition(
+              opacity: animation,
+              child: const LandScreen(),
+            );
+          },
+        ),
       );
     });
   }
@@ -58,53 +66,64 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Coffee Gradient Background
       body: Container(
+        // Premium Coffee Gradient Background
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFF3E2723), // Deep coffee
-              Color(0xFF1A120D), // Dark roast
+              Color(0xFF4E342E), // Rich Coffee
+              Color(0xFF1A120D), // Dark Roast
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
 
-        child: Center(
-          child: FadeTransition(
-            opacity: fadeIn,
-            child: SlideTransition(
-              position: slideUp,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // App Title
-                  Text(
-                    "Option Trading App",
-                    style: TextStyle(
-                      color: darkTextColor,
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.7,
-                      shadows: [
-                        Shadow(color: Colors.grey.shade300, blurRadius: 10),
-                      ],
+        child: SafeArea(
+          child: Center(
+            child: FadeTransition(
+              opacity: fadeIn,
+              child: SlideTransition(
+                position: slideUp,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    /// 🔥 Smooth Hero Title (Matches LandScreen)
+                    Hero(
+                      tag: "trading_header",
+                      child: Material(
+                        color: Colors.transparent,
+                        child: Text(
+                          "Option Trading App",
+                          style: TextStyle(
+                            color: darkTextColor,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.8,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withOpacity(0.4),
+                                blurRadius: 12,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 12),
 
-                  // Tagline (optional)
-                  Text(
-                    "Powered by Vipin Maurya",
-                    style: TextStyle(
-                      color: Colors.grey.shade200,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                    Text(
+                      "Powered by Vipin Maurya",
+                      style: TextStyle(
+                        color: Colors.grey.shade200,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.3,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

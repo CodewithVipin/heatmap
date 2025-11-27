@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 
 class SummaryDetails extends StatelessWidget {
@@ -6,7 +8,6 @@ class SummaryDetails extends StatelessWidget {
   final double avgProfit;
   final double avgProfitPercent;
   final double totalProfit;
-
   final double coverTarget;
 
   const SummaryDetails({
@@ -19,139 +20,82 @@ class SummaryDetails extends StatelessWidget {
     required this.avgProfitPercent,
   });
 
+  Color get profitColor => totalProfit >= 0
+      ? Colors.greenAccent.shade400
+      : Colors.deepOrangeAccent.shade200;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white, width: 0.5),
+        color: Colors.grey.shade900,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white12, width: 0.6),
       ),
+
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ------------------------------
+          // TARGET AMOUNT + COVER %
+          // ------------------------------
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              _label("Target Amount"),
+
               Text(
-                "Target Amount",
+                "₹${targetAmount.toStringAsFixed(2)}",
                 style: TextStyle(
-                  color: Colors.grey.shade400,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              Text(
-                "${targetAmount.toStringAsFixed(2)} Rs.",
-                style: TextStyle(
-                  color: Colors.grey.shade500,
+                  color: Colors.grey.shade300,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.only(
-                  left: 15,
-                  right: 15,
-                  top: 5,
-                  bottom: 5,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: totalProfit >= 0 ? Colors.green : Colors.deepOrange,
-                  ),
-                  color: Colors.grey.shade800,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Text(
-                  "${coverTarget.toStringAsFixed(2)}%",
-                  style: TextStyle(
-                    color: totalProfit > 0 ? Colors.green : Colors.deepOrange,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
+
+              // Cover % pill chip
+              _pillChip("${coverTarget.toStringAsFixed(1)}%", profitColor),
             ],
           ),
-          const Divider(),
+
+          const Divider(color: Colors.white12, height: 24),
+
+          // ------------------------------
+          // TOTAL INVESTMENT
+          // ------------------------------
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              _label("Total Investment"),
               Text(
-                "Total Investment",
+                "₹${totalInvestment.toStringAsFixed(2)}",
                 style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              Text(
-                "${totalInvestment.toStringAsFixed(2)} Rs.",
-                style: TextStyle(
-                  color: Colors.grey.shade500,
+                  color: Colors.grey.shade300,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 5),
+
+          const SizedBox(height: 8),
+
+          // ------------------------------
+          // P/L % SECTION
+          // ------------------------------
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                padding: const EdgeInsets.only(
-                  left: 15,
-                  right: 15,
-                  top: 5,
-                  bottom: 5,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade800,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Text(
-                  "P/L Percentage",
-                  style: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(
-                    color: totalProfit >= 0 ? Colors.green : Colors.deepOrange,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.grey.shade800,
-                      ),
-                      padding: const EdgeInsets.only(
-                        left: 10,
-                        right: 10,
-                        top: 5,
-                        bottom: 5,
-                      ),
-                      child: Text(
-                        "${avgProfitPercent.toStringAsFixed(2)} %",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w200,
-                          fontSize: 10,
-                          color: totalProfit >= 0
-                              ? Colors.green
-                              : Colors.deepOrange,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _titleChip("P/L Percentage"),
+
+              _pillChip("${avgProfitPercent.toStringAsFixed(2)}%", profitColor),
             ],
           ),
-          const SizedBox(height: 5),
-          const Divider(),
+
+          const Divider(color: Colors.white12, height: 26),
+
+          // ------------------------------
+          // TOTAL PROFIT/LOSS
+          // ------------------------------
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -159,19 +103,64 @@ class SummaryDetails extends StatelessWidget {
                 "Total P/L",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey,
+                  color: Colors.white70,
                 ),
               ),
-              Text(
-                "${totalProfit.toStringAsFixed(2)} Rs.",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: totalProfit > 0 ? Colors.green : Colors.deepOrange,
-                ),
-              ),
+              _pillChip("₹${totalProfit.toStringAsFixed(2)}", profitColor),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  // ------------------------------
+  // REUSABLE UI COMPONENTS
+  // ------------------------------
+
+  Widget _label(String text) {
+    return Text(
+      text,
+      style: TextStyle(
+        color: Colors.grey.shade400,
+        fontWeight: FontWeight.w500,
+      ),
+    );
+  }
+
+  Widget _titleChip(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade800,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: Colors.grey.shade300,
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget _pillChip(String text, Color borderColor) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: borderColor, width: 1),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: borderColor,
+          fontWeight: FontWeight.bold,
+          fontSize: 13,
+        ),
       ),
     );
   }

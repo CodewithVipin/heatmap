@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:heat_map/screens/gauge_pcr.dart';
 import 'package:heat_map/screens/record_entry_screen.dart';
@@ -23,60 +25,76 @@ class LandScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                /// ------------------------------------
-                /// 🔥 PREMIUM ANIMATED TRADING TEXT
-                /// ------------------------------------
-                TweenAnimationBuilder<double>(
-                  duration: const Duration(seconds: 2),
-                  curve: Curves.easeInOut,
-                  tween: Tween<double>(begin: 0, end: 1),
-                  builder: (context, value, child) {
-                    return Opacity(
-                      opacity: value,
-                      child: Transform.translate(
-                        offset: Offset(0, (1 - value) * 20),
-                        child: child,
+                // ------------------------------------------------------
+                // ⭐ ZERO Flicker Premium Hero Header
+                // ------------------------------------------------------
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      // 🔥 PREMIUM DUAL-TONE GLOW EFFECT
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white.withOpacity(0.08),
+                          blurRadius: 12,
+                          spreadRadius: 1,
+                          offset: const Offset(-4, -4), // upper soft glow
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.35),
+                          blurRadius: 18,
+                          spreadRadius: 6,
+                          offset: const Offset(4, 6), // bottom shadow depth
+                        ),
+                      ],
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.12),
+                        width: 1.2,
                       ),
-                    );
-                  },
-                  child: const Text(
-                    "Analyse • Trade • Grow",
-                    style: TextStyle(
-                      color: darkTextColor,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
+                    ),
+                    child: Material(
+                      color: darkTabColor,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Column(
+                          children: const [
+                            SizedBox(height: 5),
+                            Text(
+                              "Analyse • Trade • Grow",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: darkTextColor,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w300,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              "Smart Option Trading Starts Here",
+                              textAlign: TextAlign
+                                  .center, // ← stops micro overflow jump
+                              style: TextStyle(
+                                color: darkTextColor,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w200,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 25),
 
-                TweenAnimationBuilder<double>(
-                  duration: const Duration(milliseconds: 1800),
-                  curve: Curves.easeOutQuad,
-                  tween: Tween<double>(begin: 0, end: 1),
-                  builder: (context, value, child) {
-                    return Opacity(
-                      opacity: value,
-                      child: Transform.scale(scale: value, child: child),
-                    );
-                  },
-                  child: const Text(
-                    "Smart Option Trading Starts Here",
-                    style: TextStyle(
-                      color: darkTextColor,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 35),
-
-                /// ------------------------------------
-                /// MAIN CARD WITH BUTTONS
-                /// ------------------------------------
+                // ------------------------------------------------------
+                // MAIN CARD
+                // ------------------------------------------------------
                 Container(
                   padding: const EdgeInsets.all(20),
                   width: double.infinity,
@@ -85,8 +103,8 @@ class LandScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.shade200,
-                        blurRadius: 12,
+                        color: Colors.black.withOpacity(0.12),
+                        blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
                     ],
@@ -94,7 +112,7 @@ class LandScreen extends StatelessWidget {
 
                   child: Column(
                     children: [
-                      /// Button 1
+                      // ---------------- PCR SCREEN -----------------
                       SizedBox(
                         width: double.infinity,
                         child: MaterialButton(
@@ -107,7 +125,7 @@ class LandScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const DeepMarketInsight(),
+                                builder: (_) => const DeepMarketInsight(),
                               ),
                             );
                           },
@@ -122,9 +140,9 @@ class LandScreen extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 20),
 
-                      /// Button 2
+                      // ---------------- RECORD SCREEN -----------------
                       SizedBox(
                         width: double.infinity,
                         child: MaterialButton(
@@ -137,7 +155,7 @@ class LandScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const RecordEntryScreen(),
+                                builder: (_) => const RecordEntryScreen(),
                               ),
                             );
                           },
